@@ -1,0 +1,78 @@
+script sql
+CREATE DATABASE IF NOT EXISTS Teamder;
+USE Teamder;
+
+/TABLAS PRINCIPALES/
+
+CREATE TABLE Interes (
+    id_interes INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_interes VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) NOT NULL,
+    carrera VARCHAR(100),
+    semestre VARCHAR(20),
+    id_interes INT,
+    FOREIGN KEY (id_interes) REFERENCES Interes(id_interes)
+);
+
+CREATE TABLE Especialidad (
+    id_especialidad INT AUTO_INCREMENT PRIMARY KEY,
+    especialidad VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Tutor (
+    id_tutor INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) NOT NULL,
+    id_especialidad INT,
+    FOREIGN KEY (id_especialidad) REFERENCES Especialidad(id_especialidad)
+);
+
+CREATE TABLE RespuestaTutor (
+    id_respuesta_tutor INT AUTO_INCREMENT PRIMARY KEY,
+    estatus VARCHAR(50),
+    fecha_respuesta DATE
+);
+
+CREATE TABLE Solicitud (
+    id_solicitud INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT,
+    id_respuesta_tutor INT,
+    fecha_creacion DATE,
+    fecha_respuesta DATE,
+    motivo_solicitud TEXT,
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario),
+    FOREIGN KEY (id_respuesta_tutor) REFERENCES RespuestaTutor(id_respuesta_tutor)
+);
+
+CREATE TABLE TemaAsesoria (
+    id_temaAsesoria INT AUTO_INCREMENT PRIMARY KEY,
+    tipo_tema VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE SesionAsesoria (
+    id_sesion INT AUTO_INCREMENT PRIMARY KEY,
+    id_tutor INT,
+    id_solicitud INT,
+    id_temaAsesoria INT,
+    fecha DATE,
+    duracion TIME,
+    observaciones TEXT,
+    FOREIGN KEY (id_tutor) REFERENCES Tutor(id_tutor),
+    FOREIGN KEY (id_solicitud) REFERENCES Solicitud(id_solicitud),
+    FOREIGN KEY (id_temaAsesoria) REFERENCES TemaAsesoria(id_temaAsesoria)
+);
+
+/TABLA CON CLAVE COMPUESTA/
+
+CREATE TABLE UsuarioSesion (
+    id_usuario INT,
+    id_sesion INT,
+    PRIMARY KEY (id_usuario, id_sesion),
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario),
+    FOREIGN KEY (id_sesion) REFERENCES SesionAsesoria(id_sesion)
+);
